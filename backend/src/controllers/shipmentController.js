@@ -134,13 +134,50 @@ exports.addEvent = async (req, res) => {
     .first();
   if (!shipment) throw new AppError('Shipment not found', 404);
 
+  // const [event] = await db('tracking_events').insert({
+  //   shipment_id: shipment.id,
+  //   status: req.body.status,
+  //   description: req.body.description,
+  //   location: req.body.location,
+  //   latitude: req.body.latitude,
+  //   longitude: req.body.longitude,
+  //   city: req.body.city,
+  //   country: req.body.country,
+  //   facility: req.body.facility,
+  //   occurred_at: req.body.occurred_at || new Date(),
+  //   source: 'manual',
+  // }).returning('*');
+
+  // Auto-lookup coordinates from city name if not provided
+  let latitude = req.body.latitude;
+  let longitude = req.body.longitude;
+
+  if ((!latitude || !longitude) && req.body.location) {
+    try {
+      const geoRes = await require('axios').get(
+        `https://nominatim.openstreetmap.org/search`,
+        {
+          params: { q: req.body.location, format: 'json', limit: 1 },
+          headers: { 'User-Agent': 'TrackFlow/1.0' },
+          timeout: 5000,
+        }
+      );
+      if (geoRes.data && geoRes.data.length > 0) {
+        latitude = parseFloat(geoRes.data[0].lat);
+        longitude = parseFloat(geoRes.data[0].lon);
+      }
+    } catch (err) {
+      logger.warn('Geocoding failed:', err.message);
+    }
+  }
+
   const [event] = await db('tracking_events').insert({
     shipment_id: shipment.id,
     status: req.body.status,
     description: req.body.description,
     location: req.body.location,
-    latitude: req.body.latitude,
-    longitude: req.body.longitude,
+    latitude,
+    longitude,
     city: req.body.city,
     country: req.body.country,
     facility: req.body.facility,
