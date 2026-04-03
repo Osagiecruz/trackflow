@@ -27,6 +27,7 @@ COPY --from=build /app/src ./src
 COPY --from=build /app/migrations ./migrations
 COPY --from=build /app/seeds ./seeds
 COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/knexfile.js ./knexfile.js
 RUN mkdir -p logs
 RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
 USER nodejs
