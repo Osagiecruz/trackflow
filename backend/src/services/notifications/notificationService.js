@@ -17,11 +17,19 @@ const STATUS_TRIGGERS = {
  */
 async function notifyStatusChange(shipment, event) {
   const triggerField = STATUS_TRIGGERS[event.status];
-  if (!triggerField) return;
+  
+  logger.info(`Notification check: status=${event.status} trigger=${triggerField} shipment=${shipment.tracking_id}`);
+
+  if (!triggerField) {
+    logger.warn(`No trigger found for status: ${event.status}`);
+    return;
+  }
 
   const subscriptions = await db('notification_subscriptions')
     .where({ shipment_id: shipment.id })
     .where(triggerField, true);
+
+  logger.info(`Found ${subscriptions.length} subscriptions for shipment ${shipment.id}`);
 
   for (const sub of subscriptions) {
     const payload = {
@@ -36,10 +44,17 @@ async function notifyStatusChange(shipment, event) {
     const promises = [];
 
     if (sub.email) {
+      logger.info(`Sending email to ${sub.email} for status ${event.status}`);
       promises.push(
         emailService.sendStatusUpdate({ ...payload, to: sub.email })
-          .then(msgId => logNotification(shipment.id, sub.id, 'email', sub.email, 'sent', msgId))
-          .catch(err => logNotification(shipment.id, sub.id, 'email', sub.email, 'failed', null, err.message))
+          .then(msgId => {
+            logger.info(`Email sent successfully to ${sub.email}: ${msgId}`);
+            return logNotification(shipment.id, sub.id, 'email', sub.email, 'sent', msgId);
+          })
+          .catch(err => {
+            logger.error(`Email FAILED to ${sub.email}: ${err.message}`);
+            return logNotification(shipment.id, sub.id, 'email', sub.email, 'failed', null, err.message);
+          })
       );
     }
 
