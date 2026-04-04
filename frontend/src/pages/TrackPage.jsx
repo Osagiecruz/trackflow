@@ -4,7 +4,7 @@ import { trackApi } from '../utils/api';
 import MapView from '../components/MapView';
 import Timeline from '../components/Timeline';
 import StatusBadge from '../components/StatusBadge';
-// import SubscribeModal from '../components/SubscribeModal';
+import { SubscribeModal } from '../components/StatusBadge';
 import { formatDate, formatRelative } from '../utils/dates';
 
 export default function TrackPage() {
