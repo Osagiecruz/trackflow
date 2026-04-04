@@ -4,8 +4,8 @@ const logger = require('../../utils/logger');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY || 'SG.placeholder');
 
 const FROM = {
-  email: process.env.SENDGRID_FROM_EMAIL || 'noreply@trackflow.io',
-  name: process.env.SENDGRID_FROM_NAME || 'TrackFlow',
+  email: process.env.SENDGRID_FROM_EMAIL || 'noreply@localhost.com',
+  name: process.env.SENDGRID_FROM_NAME || 'TrackFlow Notifications',
 };
 
 const STATUS_LABELS = {
@@ -87,7 +87,7 @@ function buildStatusEmailHtml({ trackingId, status, description, location, estim
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td align="center">
-                    <a href="https://trackflow.io/track/${trackingId}"
+                    <a href="${process.env.FRONTEND_URL}/track/${trackingId}"
                        style="display:inline-block;background:${color};color:#0D0E0F;font-size:14px;font-weight:700;padding:14px 32px;border-radius:10px;text-decoration:none;letter-spacing:0.01em;">
                       View Full Tracking →
                     </a>
@@ -102,8 +102,8 @@ function buildStatusEmailHtml({ trackingId, status, description, location, estim
             <td style="border-top:1px solid rgba(255,255,255,0.06);padding-top:24px;">
               <p style="margin:0;font-size:12px;color:#5A5855;text-align:center;line-height:1.6;">
                 You're receiving this because you're tracking shipment ${trackingId}.<br>
-                <a href="https://trackflow.io/unsubscribe" style="color:#8A8880;">Unsubscribe</a> · 
-                <a href="https://trackflow.io/privacy" style="color:#8A8880;">Privacy</a>
+                <a href="${process.env.FRONTEND_URL}/unsubscribe" style="color:#8A8880;">Unsubscribe</a> · 
+                <a href="${process.env.FRONTEND_URL}/privacy" style="color:#8A8880;">Privacy</a>
               </p>
             </td>
           </tr>
@@ -125,12 +125,20 @@ async function sendStatusUpdate({ to, trackingId, status, description, location,
   }
 
   const msg = {
-    to,
-    from: FROM,
-    subject: `${label} — Shipment ${trackingId}`,
-    html: buildStatusEmailHtml({ trackingId, status, description, location, estimatedDelivery }),
-    text: `${label}: ${description || ''} ${location ? `at ${location}` : ''}. Track: https://trackflow.io/track/${trackingId}`,
-  };
+  to,
+  from: FROM,
+  subject: `${label} — Shipment ${trackingId}`,
+  html: buildStatusEmailHtml({ trackingId, status, description, location, estimatedDelivery }),
+  text: `${label}: ${description || ''} ${location ? `at ${location}` : ''}. Track: ${process.env.FRONTEND_URL}/track/${trackingId}`,
+  headers: {
+    'List-Unsubscribe': `<${process.env.FRONTEND_URL}/unsubscribe>`,
+    'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+  },
+  trackingSettings: {
+    clickTracking: { enable: false },
+    openTracking: { enable: false },
+  },
+};
 
   const [response] = await sgMail.send(msg);
   logger.info(`Email sent to ${to}: ${response.headers['x-message-id']}`);
