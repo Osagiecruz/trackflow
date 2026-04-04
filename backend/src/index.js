@@ -23,6 +23,7 @@ const webhookRoutes = require('./routes/webhooks');
 const { startPollingJob } = require('./services/tracking/poller');
 
 const app = express();
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 4000;
 
 // ─── Middleware ───────────────────────────────────────────
@@ -66,6 +67,11 @@ app.use(errorHandler);
 // ─── Start ────────────────────────────────────────────────
 async function start() {
   try {
+    // run migrations programatically
+    const knex = require('./config/database');
+    await knex.migrate.latest();
+    logger.info('Migrations up to date');
+    
     await connectRedis();
     logger.info('Redis connected');
 
