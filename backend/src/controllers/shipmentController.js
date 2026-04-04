@@ -5,6 +5,7 @@ const notificationService = require('../services/notifications/notificationServi
 const webhookService = require('../services/webhooks/webhookService');
 const AppError = require('../utils/AppError');
 const logger = require('../utils/logger');
+const { createClientCredentials } = require('../services/clients/clientCredentialService');
 
 exports.list = async (req, res) => {
   const { status, carrier, page = 1, limit = 20, search } = req.query;
@@ -82,15 +83,21 @@ exports.create = async (req, res) => {
     });
   }
 
-  // Send dispatch notification
+ // Send dispatch notification
   try {
     await notificationService.notifyShipmentCreated(shipment);
   } catch (err) {
     logger.warn('Dispatch notification failed:', err.message);
   }
 
+  // Auto-create client login credentials and email them
+  try {
+    await createClientCredentials(shipment, req.agency.id);
+  } catch (err) {
+    logger.warn('Client credential creation failed:', err.message);
+  }
+
   res.status(201).json({ shipment });
-};
 
 exports.getById = async (req, res) => {
   const shipment = await db('shipments')

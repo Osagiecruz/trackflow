@@ -6,15 +6,20 @@ import './styles/globals.css';
 
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import Layout from './components/Layout';
-import TrackPage from './pages/TrackPage';
+import LandingPage from './pages/LandingPage';
 import DashboardPage from './pages/DashboardPage';
 import ShipmentsPage from './pages/ShipmentsPage';
 import ShipmentDetailPage from './pages/ShipmentDetailPage';
 import CreateShipmentPage from './pages/CreateShipmentPage';
 import AnalyticsPage from './pages/AnalyticsPage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
+import { LoginPage } from './pages/LoginPage';
+import { RegisterPage } from './pages/LoginPage';
 import SettingsPage from './pages/SettingsPage';
+import ClientLoginPage from './pages/ClientLoginPage';
+import ClientTrackingPage from './pages/ClientTrackingPage';
+import AgencyRequestPage from './pages/AgencyRequestPage';
+import AdminPage from './pages/AdminPage';
+import { AboutPage, ContactPage, ServicesPage, ReviewsPage, FAQPage } from './pages/PublicPages';
 
 function PrivateRoute({ children }) {
   const { agency, loading } = useAuth();
@@ -39,17 +44,26 @@ function App() {
           }}
         />
         <Routes>
-          {/* Public */}
-          <Route path="/" element={<TrackPage />} />
-          <Route path="/track/:trackingId?" element={<TrackPage />} />
+          {/* Public marketing pages */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/reviews" element={<ReviewsPage />} />
+          <Route path="/faq" element={<FAQPage />} />
+
+          {/* Agency auth */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/agency/apply" element={<AgencyRequestPage />} />
+
+          {/* Client portal */}
+          <Route path="/client/login" element={<ClientLoginPage />} />
+          <Route path="/client/tracking" element={<ClientTrackingPage />} />
 
           {/* Agency dashboard (protected) */}
           <Route path="/dashboard" element={
-            <PrivateRoute>
-              <Layout />
-            </PrivateRoute>
+            <PrivateRoute><Layout /></PrivateRoute>
           }>
             <Route index element={<DashboardPage />} />
             <Route path="shipments" element={<ShipmentsPage />} />
@@ -57,6 +71,7 @@ function App() {
             <Route path="shipments/:id" element={<ShipmentDetailPage />} />
             <Route path="analytics" element={<AnalyticsPage />} />
             <Route path="settings" element={<SettingsPage />} />
+            <Route path="admin" element={<AdminPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
@@ -65,7 +80,5 @@ function App() {
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <React.StrictMode><App /></React.StrictMode>
 );

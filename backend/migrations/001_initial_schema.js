@@ -92,7 +92,7 @@ exports.up = async function (knex) {
     t.string('email');
     t.string('phone');
     t.boolean('notify_on_dispatch').defaultTo(true);
-    t.boolean('notify_on_transit').defaultTo(false);
+    t.boolean('notify_on_transit').defaultTo(true);
     t.boolean('notify_on_customs').defaultTo(true);
     t.boolean('notify_on_out_for_delivery').defaultTo(true);
     t.boolean('notify_on_delivered').defaultTo(true);

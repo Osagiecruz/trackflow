@@ -87,13 +87,14 @@ export function LoginPage() {
         </button>
       </form>
       <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-        No account? <Link to="/register" style={{ color: 'var(--brand)', fontWeight: 700 }}>Create one free</Link>
+        No account? <Link to="/agency/apply" style={{ color: 'var(--brand)', fontWeight: 700 }}>Apply for agency access</Link>
       </p>
     </AuthLayout>
   );
 }
 
 export default LoginPage;
+export { LoginPage };
 
 export function RegisterPage() {
   const { register } = useAuth();

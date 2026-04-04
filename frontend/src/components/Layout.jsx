@@ -63,6 +63,23 @@ export default function Layout() {
               {item.label}
             </NavLink>
           ))}
+          {/* Admin link — only visible to admin */}
+          {agency?.email === import.meta.env.VITE_ADMIN_EMAIL && (
+            <NavLink
+              to="/dashboard/admin"
+              style={({ isActive }) => ({
+                display: 'flex', alignItems: 'center', gap: 10,
+                padding: '9px 12px', borderRadius: 8, fontSize: '0.85rem',
+                fontWeight: isActive ? 700 : 400,
+                color: isActive ? 'var(--danger)' : 'var(--text-muted)',
+                background: isActive ? 'rgba(226,75,74,0.1)' : 'transparent',
+                marginBottom: 2, transition: 'all 0.15s', textDecoration: 'none',
+              })}
+            >
+              <span style={{ fontSize: 14 }}>🛡️</span>
+              Admin
+            </NavLink>
+          )}
         </nav>
 
         {/* Agency info + logout */}

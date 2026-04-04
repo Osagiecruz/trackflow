@@ -18,6 +18,8 @@ const authRoutes = require('./routes/auth');
 const shipmentRoutes = require('./routes/shipments');
 const analyticsRoutes = require('./routes/analytics');
 const webhookRoutes = require('./routes/webhooks');
+const clientAuthRoutes = require('./routes/clientAuth');
+const agencyRequestRoutes = require('./routes/agencyRequests');
 
 // Background jobs
 const { startPollingJob } = require('./services/tracking/poller');
@@ -53,6 +55,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/shipments', shipmentRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/webhooks', webhookRoutes);
+app.use('/api/client', clientAuthRoutes);
+app.use('/api/agency-requests', agencyRequestRoutes);
 
 // Health check
 app.get('/health', (req, res) => res.json({
@@ -71,7 +75,7 @@ async function start() {
     const knex = require('./config/database');
     await knex.migrate.latest();
     logger.info('Migrations up to date');
-    
+
     await connectRedis();
     logger.info('Redis connected');
 

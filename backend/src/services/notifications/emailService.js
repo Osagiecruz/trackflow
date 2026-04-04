@@ -175,4 +175,144 @@ async function sendRaw(to, subject, html) {
   await sgMail.send({ to, from: FROM, subject, html, text: html.replace(/<[^>]+>/g, '') });
 }
 
-module.exports = { sendStatusUpdate, sendWelcome, sendPasswordReset, sendRaw };
+async function sendClientCredentials({ name, email, username, password, trackingId, origin, destination, estimatedDelivery }) {
+  if (process.env.NODE_ENV === 'test') return 'test_id';
+
+  const loginUrl = `${process.env.FRONTEND_URL}/client/login`;
+  const eta = estimatedDelivery
+    ? new Date(estimatedDelivery).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
+    : 'To be confirmed';
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#0D0E0F;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0D0E0F;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
+        <tr><td style="padding-bottom:24px;">
+          <span style="font-size:20px;font-weight:800;color:#F2EFE8;">Track<span style="color:#E8A020;">Flow</span></span>
+        </td></tr>
+        <tr><td style="background:#161819;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:32px;">
+          <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#F2EFE8;">Your shipment is on its way!</h1>
+          <p style="margin:0 0 24px;font-size:14px;color:#8A8880;line-height:1.6;">Hi ${name}, a package is being sent to you. Use the credentials below to track it in real time.</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#1E2022;border-radius:12px;margin-bottom:24px;">
+            <tr><td style="padding:20px 24px;">
+              <p style="margin:0 0 4px;font-size:11px;color:#5A5855;text-transform:uppercase;letter-spacing:0.08em;">Route</p>
+              <p style="margin:0 0 16px;font-size:15px;font-weight:700;color:#F2EFE8;">${origin} → ${destination}</p>
+              <p style="margin:0 0 4px;font-size:11px;color:#5A5855;text-transform:uppercase;letter-spacing:0.08em;">Estimated Delivery</p>
+              <p style="margin:0;font-size:15px;font-weight:700;color:#E8A020;">${eta}</p>
+            </td></tr>
+          </table>
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#262A2D;border-radius:12px;margin-bottom:24px;">
+            <tr><td style="padding:20px 24px;">
+              <p style="margin:0 0 4px;font-size:11px;color:#5A5855;text-transform:uppercase;letter-spacing:0.08em;">Your Login Username</p>
+              <p style="margin:0 0 16px;font-size:22px;font-weight:800;color:#4A9EE8;font-family:monospace;">${username}</p>
+              <p style="margin:0 0 4px;font-size:11px;color:#5A5855;text-transform:uppercase;letter-spacing:0.08em;">Your Password</p>
+              <p style="margin:0;font-size:22px;font-weight:800;color:#3DB87A;font-family:monospace;">${password}</p>
+            </td></tr>
+          </table>
+          <p style="margin:0 0 20px;font-size:13px;color:#8A8880;line-height:1.6;">Keep these credentials safe. You can log in at any time to track your package.</p>
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr><td align="center">
+              <a href="${loginUrl}" style="display:inline-block;background:#E8A020;color:#0D0E0F;font-size:15px;font-weight:700;padding:14px 36px;border-radius:10px;text-decoration:none;">Track My Package →</a>
+            </td></tr>
+          </table>
+        </td></tr>
+        <tr><td style="padding-top:24px;">
+          <p style="margin:0;font-size:12px;color:#5A5855;text-align:center;">Tracking ID: <span style="font-family:monospace;">${trackingId}</span></p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+  await sgMail.send({
+    to: email,
+    from: FROM,
+    subject: `Your package is on its way — Login to track it`,
+    html,
+    text: `Hi ${name}, your shipment (${trackingId}) from ${origin} to ${destination} is on its way.\n\nLogin at ${loginUrl}\nUsername: ${username}\nPassword: ${password}\n\nEstimated delivery: ${eta}`,
+  });
+
+  logger.info(`Client credentials email sent to ${email}`);
+}
+
+async function sendAgencyApproved({ name, email, password }) {
+  if (process.env.NODE_ENV === 'test') return 'test_id';
+  const loginUrl = `${process.env.FRONTEND_URL}/login`;
+  const html = `
+<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:40px 20px;background:#0D0E0F;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
+    <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;">
+      <tr><td style="padding-bottom:24px;">
+        <span style="font-size:20px;font-weight:800;color:#F2EFE8;">Track<span style="color:#E8A020;">Flow</span></span>
+      </td></tr>
+      <tr><td style="background:#161819;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:32px;">
+        <div style="display:inline-block;background:rgba(61,184,122,0.15);border:1px solid rgba(61,184,122,0.3);color:#3DB87A;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;margin-bottom:20px;">✓ Approved</div>
+        <h1 style="margin:0 0 12px;font-size:22px;font-weight:800;color:#F2EFE8;">Welcome to TrackFlow, ${name}!</h1>
+        <p style="margin:0 0 24px;font-size:14px;color:#8A8880;line-height:1.6;">Your agency account has been approved. Here are your login credentials:</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#262A2D;border-radius:12px;margin-bottom:24px;">
+          <tr><td style="padding:20px 24px;">
+            <p style="margin:0 0 4px;font-size:11px;color:#5A5855;text-transform:uppercase;letter-spacing:0.08em;">Email</p>
+            <p style="margin:0 0 16px;font-size:16px;font-weight:700;color:#F2EFE8;">${email}</p>
+            <p style="margin:0 0 4px;font-size:11px;color:#5A5855;text-transform:uppercase;letter-spacing:0.08em;">Temporary Password</p>
+            <p style="margin:0;font-size:20px;font-weight:800;color:#3DB87A;font-family:monospace;">${password}</p>
+          </td></tr>
+        </table>
+        <p style="margin:0 0 20px;font-size:13px;color:#8A8880;">Please change your password after your first login.</p>
+        <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
+          <a href="${loginUrl}" style="display:inline-block;background:#E8A020;color:#0D0E0F;font-size:15px;font-weight:700;padding:14px 36px;border-radius:10px;text-decoration:none;">Login to Dashboard →</a>
+        </td></tr></table>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body>
+</html>`;
+
+  await sgMail.send({
+    to: email,
+    from: FROM,
+    subject: 'Your TrackFlow agency account is approved',
+    html,
+    text: `Hi ${name}, your agency account has been approved!\n\nEmail: ${email}\nPassword: ${password}\n\nLogin at: ${loginUrl}`,
+  });
+}
+
+async function sendAgencyRejected({ name, email, note }) {
+  if (process.env.NODE_ENV === 'test') return 'test_id';
+  await sgMail.send({
+    to: email,
+    from: FROM,
+    subject: 'Update on your TrackFlow agency request',
+    html: `<div style="font-family:sans-serif;padding:32px;background:#0D0E0F;color:#F2EFE8;"><h2>Hi ${name},</h2><p>After reviewing your request, we're unable to approve your TrackFlow agency account at this time.</p>${note ? `<p><strong>Reason:</strong> ${note}</p>` : ''}<p>You're welcome to reapply in the future. Contact us if you have questions.</p></div>`,
+    text: `Hi ${name}, unfortunately we couldn't approve your agency request at this time.${note ? ` Reason: ${note}` : ''} Please contact us if you have questions.`,
+  });
+}
+
+async function sendAdminNotification({ subject, message }) {
+  const adminEmail = process.env.ADMIN_EMAIL;
+  if (!adminEmail || process.env.NODE_ENV === 'test') return;
+  await sgMail.send({
+    to: adminEmail,
+    from: FROM,
+    subject: `[TrackFlow Admin] ${subject}`,
+    html: `<div style="font-family:sans-serif;padding:24px;background:#0D0E0F;color:#F2EFE8;"><pre style="white-space:pre-wrap;color:#F2EFE8;">${message}</pre></div>`,
+    text: message,
+  });
+}
+
+module.exports = {
+  sendStatusUpdate,
+  sendWelcome,
+  sendPasswordReset,
+  sendRaw,
+  sendClientCredentials,
+  sendAgencyApproved,
+  sendAgencyRejected,
+  sendAdminNotification,
+};
