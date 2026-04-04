@@ -98,6 +98,7 @@ exports.create = async (req, res) => {
   }
 
   res.status(201).json({ shipment });
+};
 
 exports.getById = async (req, res) => {
   const shipment = await db('shipments')
