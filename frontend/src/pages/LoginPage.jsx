@@ -94,7 +94,7 @@ export function LoginPage() {
 }
 
 export default LoginPage;
-export { LoginPage };
+// export { LoginPage };
 
 export function RegisterPage() {
   const { register } = useAuth();
