@@ -93,9 +93,6 @@ export function LoginPage() {
   );
 }
 
-export default LoginPage;
-// export { LoginPage };
-
 export function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -141,3 +138,5 @@ export function RegisterPage() {
     </AuthLayout>
   );
 }
+
+export default LoginPage;
