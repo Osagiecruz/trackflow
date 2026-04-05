@@ -18,7 +18,7 @@ router.post('/register',
 
 router.post('/login',
   [
-    body('email').isEmail().normalizeEmail(),
+    body('email').isEmail().normalizeEmail({ gmail_remove_dots: false }),
     body('password').notEmpty(),
   ],
   validate,
