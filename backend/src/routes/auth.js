@@ -7,7 +7,7 @@ const validate = require('../middleware/validate');
 router.post('/register',
   [
     body('name').trim().isLength({ min: 2, max: 100 }),
-    body('email').isEmail().normalizeEmail(),
+   body('email').isEmail().normalizeEmail({ gmail_remove_dots: false, gmail_remove_subaddress: false }),
     body('password').isLength({ min: 8 }).matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/),
     body('phone').optional().isMobilePhone(),
     body('country').optional().isISO31661Alpha2(),
@@ -18,7 +18,7 @@ router.post('/register',
 
 router.post('/login',
   [
-    body('email').isEmail().normalizeEmail({ gmail_remove_dots: false }),
+    body('email').isEmail().normalizeEmail({ gmail_remove_dots: false, gmail_remove_subaddress: false }),
     body('password').notEmpty(),
   ],
   validate,

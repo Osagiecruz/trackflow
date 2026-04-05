@@ -7,6 +7,10 @@ export default defineConfig({
   resolve: {
     alias: { '@': path.resolve(__dirname, './src') },
   },
+  define: {
+    // Hardcode fallback in case env var isn't picked up
+    '__API_URL__': JSON.stringify(process.env.VITE_API_URL || 'https://trackflow-production-22cc.up.railway.app'),
+  },
   server: {
     port: 3000,
     proxy: {
