@@ -373,6 +373,29 @@ async function sendSubscriptionRejected({ to, name, plan, note }) {
   });
 }
 
+async function sendAdminNotification({ subject, message }) {
+  if (process.env.NODE_ENV === 'test') return 'test_id';
+
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.SENDGRID_FROM_EMAIL;
+  if (!adminEmail) {
+    logger.warn('ADMIN_EMAIL not set, skipping admin notification');
+    return;
+  }
+
+  await sgMail.send({
+    to: adminEmail,
+    from: FROM,
+    subject: [TrackFlow Admin] ${subject},
+    html: <div style="font-family:sans-serif;padding:32px;background:#0D0E0F;color:#F2EFE8;">
+      <h2 style="color:#E8A020;">${subject}</h2>
+      <p style="color:#8A8880;line-height:1.6;">${message}</p>
+    </div>,
+    text: ${subject}\n\n${message},
+  });
+
+  logger.info(Admin notification sent: ${subject});
+}
+
 module.exports = {
   sendStatusUpdate,
   sendWelcome,
