@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { useState, useEffect } from 'react';
 
 const API = import.meta.env.VITE_API_URL || '';
 
