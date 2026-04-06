@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { useState, useEffect } from 'react';
 
 const API = import.meta.env.VITE_API_URL || '';
 
@@ -9,6 +10,16 @@ export default function AgencyRequestPage() {
     agency_name: '', email: '', country: '',
     phone: '', website: '', description: '',
   });
+  const [selectedPlan, setSelectedPlan] = useState('starter');
+  const [billingCycle, setBillingCycle] = useState('monthly');
+  const [plans, setPlans] = useState([]);
+
+  useEffect(() => {
+    axios.get(`${API}/api/subscriptions/plans`)
+      .then(r => setPlans(r.data.plans))
+      .catch(() => {});
+  }, []);
+
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -124,6 +135,41 @@ export default function AgencyRequestPage() {
                       onFocus={e => e.target.style.borderColor = 'var(--brand)'}
                       onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.14)'} />
                   </div>
+                </div>
+
+                {/* Plan selection */}
+                <div style={{ gridColumn: 'span 2', marginTop: '0.5rem' }}>
+                  <label style={labelStyle}>Choose a Plan *</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {[
+                      { value: 'starter', label: 'Starter — Free', desc: '1 shipment total. Upgrade anytime.' },
+                      { value: 'pro_monthly', label: 'Pro — $50/month', desc: '10 shipments/month with rollover.' },
+                      { value: 'pro_yearly', label: 'Pro — $540/year (save 10%)', desc: '10 shipments/month with rollover. Billed annually.' },
+                    ].map(p => (
+                      <label key={p.value} style={{
+                        display: 'flex', alignItems: 'flex-start', gap: 12,
+                        background: (selectedPlan === 'starter' && p.value === 'starter') || (selectedPlan === 'pro' && billingCycle === 'monthly' && p.value === 'pro_monthly') || (selectedPlan === 'pro' && billingCycle === 'yearly' && p.value === 'pro_yearly') ? 'rgba(232,160,32,0.08)' : 'var(--surface2)',
+                        border: `1px solid ${(selectedPlan === 'starter' && p.value === 'starter') || (selectedPlan === 'pro' && billingCycle === 'monthly' && p.value === 'pro_monthly') || (selectedPlan === 'pro' && billingCycle === 'yearly' && p.value === 'pro_yearly') ? 'rgba(232,160,32,0.4)' : 'var(--border2)'}`,
+                        borderRadius: 10, padding: '12px 14px', cursor: 'pointer',
+                      }}>
+                        <input type="radio" name="plan"
+                          checked={(p.value === 'starter' && selectedPlan === 'starter') || (p.value === 'pro_monthly' && selectedPlan === 'pro' && billingCycle === 'monthly') || (p.value === 'pro_yearly' && selectedPlan === 'pro' && billingCycle === 'yearly')}
+                          onChange={() => { if (p.value === 'starter') { setSelectedPlan('starter'); } else if (p.value === 'pro_monthly') { setSelectedPlan('pro'); setBillingCycle('monthly'); } else { setSelectedPlan('pro'); setBillingCycle('yearly'); } }}
+                          style={{ marginTop: 2 }} />
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: '0.88rem', marginBottom: 2 }}>{p.label}</div>
+                          <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{p.desc}</div>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                  {selectedPlan === 'pro' && (
+                    <div style={{ marginTop: 12, background: 'var(--surface2)', borderRadius: 10, padding: '1rem' }}>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+                        After your application is approved, you'll receive payment instructions to activate the Pro plan. You can start on Starter and upgrade anytime.
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <button type="submit" disabled={loading} style={{

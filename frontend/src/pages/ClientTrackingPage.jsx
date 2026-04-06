@@ -5,13 +5,16 @@ import { StatusBadge } from '../components/StatusBadge';
 import Timeline from '../components/Timeline';
 import MapView from '../components/MapView';
 import { formatDate, formatRelative } from '../utils/dates';
+import ClientPaymentCard from '../components/ClientPaymentCard';
 import toast from 'react-hot-toast';
 
-const API = import.meta.env.VITE_API_URL || '';
+
+const API = import.meta.env.VITE_API_URL || 'https://trackflow-production-22cc.up.railway.app';
 
 export default function ClientTrackingPage() {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
+  const [quotation, setQuotation] = useState(null);
   const [loading, setLoading] = useState(true);
   const clientInfo = JSON.parse(localStorage.getItem('client_info') || '{}');
 
@@ -22,7 +25,12 @@ export default function ClientTrackingPage() {
     axios.get(`${API}/api/client/tracking`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then(res => setData(res.data))
+      .then(res => {
+        setData(res.data);
+        return axios.get(`${API}/api/quotations/my`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }).then(q => setQuotation(q.data.quotation)).catch(() => {});
+      })
       .catch(err => {
         if (err.response?.status === 401) {
           localStorage.removeItem('client_token');
@@ -153,12 +161,22 @@ export default function ClientTrackingPage() {
             </div>
 
             {/* Timeline */}
-            <div style={{ background: 'var(--surface)', border: '1px solid var(--border2)', borderRadius: 16, padding: '1.5rem' }}>
+            <div style={{ background: 'var(--surface)', border: '1px solid var(--border2)', borderRadius: 16, padding: '1.5rem', marginBottom: '1.5rem' }}>
               <div style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-dim)', marginBottom: '1.25rem' }}>
                 Shipment Timeline
               </div>
               <Timeline events={events} />
             </div>
+
+            {/* Payment */}
+            {quotation && (
+              <ClientPaymentCard
+                quotation={quotation}
+                onUpdate={() => axios.get(`${API}/api/quotations/my`, {
+                  headers: { Authorization: `Bearer ${localStorage.getItem('client_token')}` },
+                }).then(q => setQuotation(q.data.quotation)).catch(() => {})}
+              />
+            )}
           </>
         )}
       </div>

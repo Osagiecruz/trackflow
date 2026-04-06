@@ -20,6 +20,8 @@ const analyticsRoutes = require('./routes/analytics');
 const webhookRoutes = require('./routes/webhooks');
 const clientAuthRoutes = require('./routes/clientAuth');
 const agencyRequestRoutes = require('./routes/agencyRequests');
+const quotationRoutes = require('./routes/quotations');
+const subscriptionRoutes = require('./routes/subscriptions');
 
 // Background jobs
 const { startPollingJob } = require('./services/tracking/poller');
@@ -57,6 +59,8 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/client', clientAuthRoutes);
 app.use('/api/agency-requests', agencyRequestRoutes);
+app.use('/api/quotations', quotationRoutes);
+app.use('/api/subscriptions', subscriptionRoutes);
 
 // Health check
 app.get('/health', (req, res) => res.json({

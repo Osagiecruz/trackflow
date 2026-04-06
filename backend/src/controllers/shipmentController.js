@@ -6,6 +6,7 @@ const webhookService = require('../services/webhooks/webhookService');
 const AppError = require('../utils/AppError');
 const logger = require('../utils/logger');
 const { createClientCredentials } = require('../services/clients/clientCredentialService');
+const { canCreateShipment, incrementShipmentCount } = require('./subscriptionController');
 
 exports.list = async (req, res) => {
   const { status, carrier, page = 1, limit = 20, search } = req.query;
@@ -41,6 +42,12 @@ exports.list = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
+  // ─── Check subscription limits ───────────────────────────
+  const check = await canCreateShipment(req.agency.id);
+  if (!check.allowed) {
+    throw new AppError(check.reason, 403);
+  }
+
   const tracking_id = generateTrackingId(req.body.origin_country, req.body.destination_country);
 
   const [shipment] = await db('shipments').insert({
@@ -95,6 +102,13 @@ exports.create = async (req, res) => {
     await createClientCredentials(shipment, req.agency.id);
   } catch (err) {
     logger.warn('Client credential creation failed:', err.message);
+  }
+
+  // Increment subscription shipment count
+  try {
+    await incrementShipmentCount(req.agency.id);
+  } catch (err) {
+    logger.warn('Subscription count increment failed:', err.message);
   }
 
   res.status(201).json({ shipment });

@@ -6,6 +6,7 @@ import Timeline from '../components/Timeline';
 import MapView from '../components/MapView';
 import { formatDate } from '../utils/dates';
 import toast from 'react-hot-toast';
+import QuotationPanel from '../components/QuotationPanel';
 
 export default function ShipmentDetailPage() {
   const { id } = useParams();
@@ -105,10 +106,13 @@ export default function ShipmentDetailPage() {
       </div>
 
       {/* Timeline */}
-      <div style={{ background: 'var(--surface)', border: '1px solid var(--border2)', borderRadius: 16, padding: '1.5rem' }}>
+      <div style={{ background: 'var(--surface)', border: '1px solid var(--border2)', borderRadius: 16, padding: '1.5rem', marginBottom: '1.5rem' }}>
         <div style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-dim)', marginBottom: '1.25rem' }}>Timeline</div>
         <Timeline events={events} />
       </div>
+
+      {/* Quotation & Payment */}
+      <QuotationPanel shipmentId={shipment.id} agencyId={shipment.agency_id} />
 
       {/* Add Event Modal */}
       {showEventForm && (

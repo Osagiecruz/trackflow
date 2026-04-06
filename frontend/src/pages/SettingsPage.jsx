@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { authApi } from '../utils/api';
 import toast from 'react-hot-toast';
+import SubscriptionWidget from '../components/SubscriptionWidget';
 
 export default function SettingsPage() {
   const { agency, updateAgency } = useAuth();
@@ -55,16 +56,8 @@ export default function SettingsPage() {
         <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Manage your agency account</p>
       </div>
 
-      {/* Plan */}
-      <div style={{ ...cardStyle, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <div style={{ fontWeight: 700, marginBottom: 4 }}>Current Plan</div>
-          <div style={{ display: 'inline-block', background: 'rgba(232,160,32,0.15)', color: 'var(--brand)', fontSize: '0.75rem', fontWeight: 700, padding: '3px 10px', borderRadius: 6, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-            {agency?.plan || 'Starter'}
-          </div>
-        </div>
-        <button style={{ ...btnStyle, background: 'var(--surface3)', color: 'var(--text)', border: '1px solid var(--border2)' }}>Upgrade plan</button>
-      </div>
+      {/* Subscription */}
+      <SubscriptionWidget />
 
       {/* Profile */}
       <div style={cardStyle}>

@@ -10,6 +10,10 @@ export default function AdminPage() {
   const [rejectModal, setRejectModal] = useState(null);
   const [rejectNote, setRejectNote] = useState('');
   const [processing, setProcessing] = useState(null);
+  const [activeTab, setActiveTab] = useState('agencies');
+  const [subPayments, setSubPayments] = useState([]);
+  const [subFilter, setSubFilter] = useState('pending');
+  const [subLoading, setSubLoading] = useState(false);
 
   useEffect(() => { loadRequests(); }, [filter]);
 
@@ -58,6 +62,36 @@ export default function AdminPage() {
     }
   }
 
+  useEffect(() => {
+    if (activeTab === 'subscriptions') loadSubPayments();
+  }, [activeTab, subFilter]);
+
+  async function loadSubPayments() {
+    setSubLoading(true);
+    try {
+      const { data } = await api.get(`/subscriptions/payments?status=${subFilter}`);
+      setSubPayments(data.payments);
+    } catch { toast.error('Failed to load payments'); }
+    finally { setSubLoading(false); }
+  }
+
+  async function confirmSubPayment(id) {
+    if (!confirm('Confirm this subscription payment and activate the plan?')) return;
+    try {
+      await api.post(`/subscriptions/payments/${id}/confirm`);
+      toast.success('Subscription activated!');
+      loadSubPayments();
+    } catch (err) { toast.error(err.response?.data?.error || 'Failed'); }
+  }
+
+  async function rejectSubPayment(id) {
+    try {
+      await api.post(`/subscriptions/payments/${id}/reject`);
+      toast.success('Payment rejected');
+      loadSubPayments();
+    } catch (err) { toast.error(err.response?.data?.error || 'Failed'); }
+  }
+
   const statusColors = {
     pending: { color: 'var(--warning)', bg: 'rgba(232,160,32,0.12)' },
     approved: { color: 'var(--success)', bg: 'rgba(61,184,122,0.12)' },
@@ -66,12 +100,20 @@ export default function AdminPage() {
 
   return (
     <div style={{ padding: '2rem', maxWidth: 1100 }}>
-      {/* Header */}
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '1.6rem', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 4 }}>Admin Panel</h1>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Review and manage agency access requests</p>
+      {/* Main tabs */}
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>
+        {[['agencies', 'Agency Requests'], ['subscriptions', 'Subscription Payments']].map(([val, label]) => (
+          <button key={val} onClick={() => setActiveTab(val)} style={{
+            padding: '8px 18px', borderRadius: 8, fontSize: '0.82rem',
+            fontFamily: 'var(--font-sans)', fontWeight: 600, cursor: 'pointer',
+            background: activeTab === val ? 'var(--brand)' : 'var(--surface)',
+            color: activeTab === val ? '#0D0E0F' : 'var(--text-muted)',
+            border: `1px solid ${activeTab === val ? 'var(--brand)' : 'var(--border2)'}`,
+          }}>{label}</button>
+        ))}
       </div>
 
+      {activeTab === 'agencies' && <>
       {/* Filter tabs */}
       <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
         {['pending', 'approved', 'rejected', ''].map(s => (
@@ -214,6 +256,51 @@ export default function AdminPage() {
           </div>
         )}
       </div>
+      </>}
+
+      {activeTab === 'subscriptions' && (
+        <div>
+          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+            {['pending', 'confirmed', 'rejected', ''].map(s => (
+              <button key={s} onClick={() => setSubFilter(s)} style={{
+                padding: '8px 14px', borderRadius: 8, fontSize: '0.78rem',
+                fontFamily: 'var(--font-sans)', fontWeight: 600, cursor: 'pointer',
+                background: subFilter === s ? 'var(--brand)' : 'var(--surface)',
+                color: subFilter === s ? '#0D0E0F' : 'var(--text-muted)',
+                border: `1px solid ${subFilter === s ? 'var(--brand)' : 'var(--border2)'}`,
+              }}>{s || 'All'}</button>
+            ))}
+          </div>
+          <div style={{ background: 'var(--surface)', border: '1px solid var(--border2)', borderRadius: 16, overflow: 'hidden' }}>
+            {subLoading ? <div style={{ padding: '3rem', textAlign: 'center' }}><div className="spinner" style={{ margin: '0 auto' }} /></div>
+            : !subPayments.length ? <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-dim)', fontSize: '0.88rem' }}>No {subFilter} payments.</div>
+            : subPayments.map((p, i) => (
+              <div key={p.id} style={{ padding: '1.25rem 1.5rem', borderBottom: i < subPayments.length - 1 ? '1px solid var(--border)' : 'none' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+                  <div>
+                    <div style={{ fontWeight: 700, marginBottom: 4 }}>{p.agency_name}</div>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: 4 }}>{p.agency_email}</div>
+                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', fontSize: '0.78rem' }}>
+                      <span>Plan: <strong style={{ color: 'var(--brand)' }}>{p.plan} / {p.billing_cycle}</strong></span>
+                      <span>Crypto: <strong>{p.crypto_currency}</strong></span>
+                      <span style={{ color: p.status === 'confirmed' ? 'var(--success)' : p.status === 'rejected' ? 'var(--danger)' : 'var(--warning)', fontWeight: 700, textTransform: 'capitalize' }}>{p.status}</span>
+                    </div>
+                    {p.message && <div style={{ marginTop: 6, fontSize: '0.78rem', color: 'var(--text-muted)', background: 'var(--surface2)', borderRadius: 8, padding: '8px 12px', maxWidth: 400 }}>{p.message}</div>}
+                  </div>
+                  {p.status === 'pending' && (
+                    <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                      <button onClick={() => confirmSubPayment(p.id)} style={{ padding: '8px 16px', borderRadius: 8, background: 'rgba(61,184,122,0.15)', border: '1px solid rgba(61,184,122,0.3)', color: 'var(--success)', fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer' }}>✓ Confirm</button>
+                      <button onClick={() => rejectSubPayment(p.id)} style={{ padding: '8px 16px', borderRadius: 8, background: 'rgba(226,75,74,0.1)', border: '1px solid rgba(226,75,74,0.25)', color: 'var(--danger)', fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer' }}>✕ Reject</button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+    
 
       {/* Reject modal */}
       {rejectModal && (
