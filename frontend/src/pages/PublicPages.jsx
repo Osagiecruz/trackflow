@@ -278,7 +278,7 @@ export function ServicesPage() {
             {
               icon: '🔔', title: 'Automated Notifications',
               desc: 'Keep recipients informed automatically. Email notifications fire the moment a shipment status changes — customs cleared, out for delivery, delivered.',
-              features: ['Email notifications via SendGrid', 'SMS alerts via Twilio', 'Customizable triggers', 'Notification log'],
+              features: ['Email notifications', 'SMS alerts', 'Customizable triggers', 'Notification log'],
               color: 'rgba(74,158,232,0.1)',
             },
             {
@@ -334,13 +334,13 @@ export function ServicesPage() {
             {
               name: 'Starter', price: 'Free', period: 'forever',
               desc: 'Perfect for getting started',
-              features: ['Up to 50 shipments/month', 'Email notifications', 'Client tracking portal', 'Manual event updates', 'Basic analytics'],
+              features: ['Limited (1 shipment)', 'Email notifications', 'Client tracking portal', 'Manual event updates', 'Basic analytics'],
               cta: 'Apply for access', href: '/agency/apply', featured: false,
             },
             {
-              name: 'Pro', price: '$29', period: 'per month',
+              name: 'Pro', price: '$50', period: 'per month',
               desc: 'For growing agencies',
-              features: ['Unlimited shipments', 'Email + SMS notifications', 'Live carrier sync (DHL, FedEx, UPS)', 'Webhook integrations', 'Advanced analytics', 'Priority support'],
+              features: ['10 shipments/month', 'Email + SMS notifications', 'Live carrier sync (DHL, FedEx, UPS)', 'Webhook integrations', 'Advanced analytics', 'Priority support'],
               cta: 'Apply for access', href: '/agency/apply', featured: true,
             },
             {
@@ -396,7 +396,7 @@ export function ServicesPage() {
 // ─── Reviews Page ──────────────────────────────────────
 export function ReviewsPage() {
   const reviews = [
-    { name: 'Aisha Bello', role: 'Operations Manager, SwiftCargo Nigeria', rating: 5, text: 'TrackFlow completely transformed how we communicate with our clients. Instead of fielding dozens of "where is my package" calls daily, clients now track in real time. The email notifications are professional and our customer satisfaction score jumped significantly.' },
+    { name: 'Kester Wimmers', role: 'Operations Manager, SwiftCargo', rating: 5, text: 'TrackFlow completely transformed how we communicate with our clients. Instead of fielding dozens of "where is my package" calls daily, clients now track in real time. The email notifications are professional and our customer satisfaction score jumped significantly.' },
     { name: 'Marcus Weber', role: 'Founder, EuroShip GmbH', rating: 5, text: 'The agency approval process gave me confidence that I was joining a serious platform. Setup took less than an hour and the DHL integration worked perfectly out of the box. My clients love the tracking portal.' },
     { name: 'Priya Sharma', role: 'Logistics Director, IndiaExpress', rating: 5, text: 'We process thousands of shipments monthly. TrackFlow handles the volume without breaking a sweat. The analytics dashboard helps us identify bottlenecks before they become problems. Highly recommend.' },
     { name: 'James O\'Brien', role: 'CEO, Dublin Freight Services', rating: 5, text: 'What sets TrackFlow apart is the client portal. Each recipient gets their own secure login — no more sharing public tracking links that anyone can see. It feels premium and our enterprise clients noticed.' },
@@ -489,14 +489,14 @@ export function FAQPage() {
         { q: 'How do I create a shipment and notify the recipient?', a: 'Log in to your agency dashboard, go to Shipments, and click "New Shipment". Fill in the recipient\'s name and email address. The moment you save the shipment, TrackFlow automatically generates a unique username and password for the recipient and emails it to them.' },
         { q: 'Which carriers do you integrate with?', a: 'We currently support DHL Express, FedEx International, and UPS Worldwide for live automatic tracking. You can also add tracking events manually for any carrier, making TrackFlow flexible for all shipping arrangements.' },
         { q: 'Can I add tracking events manually?', a: 'Yes. Go to your dashboard, open a shipment, and click "+ Add Event". You can enter the status, description, and location. The system will automatically look up GPS coordinates from the location name, and email notifications will fire to the recipient immediately.' },
-        { q: 'Is there a limit on how many shipments I can create?', a: 'The Starter plan allows up to 50 shipments per month. The Pro plan has no limit. Contact us if you need a custom arrangement for very high volumes.' },
+        { q: 'Is there a limit on how many shipments I can create?', a: 'The Starter plan offers just one shipment after account registration, after which you can go Pro. The Pro plan offers up to 10 shipments/month. Contact us if you need a custom arrangement for very high volumes.' },
       ],
     },
     {
       category: 'Technical & Security',
       items: [
         { q: 'How is my data protected?', a: 'All data is encrypted in transit (HTTPS/TLS) and at rest. Passwords are hashed using bcrypt with 12 salt rounds — we never store plain text passwords. Tokens expire and rotate automatically. Our infrastructure runs on secure managed cloud platforms.' },
-        { q: 'Do you sell or share my data?', a: 'Never. We do not sell, share, or rent any personal data to third parties. Data is used solely to provide the tracking service. We use SendGrid for email delivery and Twilio for SMS — both are industry-standard providers with their own privacy commitments.' },
+        { q: 'Do you sell or share my data?', a: 'Never. We do not sell, share, or rent any personal data to third parties. Data is used solely to provide the tracking service.' },
         { q: 'What happens if I forget my password?', a: 'Agency accounts have a "Forgot Password" link on the login page. For client/recipient accounts, contact the shipping agency that sent your package — they can ask us to resend your credentials.' },
         { q: 'Do you have an API?', a: 'Yes. Agency accounts have full API access via JWT authentication. You can create shipments, add events, manage subscriptions, and receive webhook notifications. Contact us for API documentation.' },
       ],

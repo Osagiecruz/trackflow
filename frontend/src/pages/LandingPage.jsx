@@ -256,7 +256,7 @@ export default function LandingPage() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
             {[
-              { text: 'TrackFlow completely transformed how we communicate with clients. No more "where is my package" calls.', name: 'Aisha Bello', role: 'Operations Manager, SwiftCargo Nigeria' },
+              { text: 'TrackFlow completely transformed how we communicate with clients. No more "where is my package" calls.', name: 'Kester Wimmers', role: 'Operations Manager, SwiftCargo' },
               { text: 'The client portal is what sets TrackFlow apart. Each recipient gets their own secure login — it feels premium.', name: "James O'Brien", role: 'CEO, Dublin Freight Services' },
               { text: "Setup took less than an hour and the DHL integration worked perfectly. My clients love the tracking portal.", name: 'Marcus Weber', role: 'Founder, EuroShip GmbH' },
             ].map(r => (
