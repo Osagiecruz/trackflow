@@ -385,15 +385,15 @@ async function sendAdminNotification({ subject, message }) {
   await sgMail.send({
     to: adminEmail,
     from: FROM,
-    subject: [TrackFlow Admin] ${subject},
-    html: <div style="font-family:sans-serif;padding:32px;background:#0D0E0F;color:#F2EFE8;">
+    subject: `[TrackFlow Admin] ${subject}`,
+    html: `<div style="font-family:sans-serif;padding:32px;background:#0D0E0F;color:#F2EFE8;">
       <h2 style="color:#E8A020;">${subject}</h2>
       <p style="color:#8A8880;line-height:1.6;">${message}</p>
-    </div>,
-    text: ${subject}\n\n${message},
+    </div>`,
+    text: `${subject}\n\n${message}`,
   });
 
-  logger.info(Admin notification sent: ${subject});
+  logger.info(`Admin notification sent: ${subject}`);
 }
 
 module.exports = {
