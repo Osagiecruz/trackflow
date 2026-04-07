@@ -238,7 +238,7 @@ export default function LandingPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', alignItems: 'center', marginBottom: '4rem' }}>
           <FadeIn direction="left">
             <div style={{ borderRadius: 20, overflow: 'hidden', height: 280 }}>
-              <img src="https://images.pexels.com/photos/7252972/pexels-photo-7252972.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Agency creating shipment" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.85)' }} />
+              <img src="https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Agency creating shipment" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.85)' }} />
             </div>
           </FadeIn>
           <FadeIn direction="right">
@@ -418,7 +418,7 @@ export default function LandingPage() {
           </FadeIn>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
             {[
-              { text: 'TrackFlow completely transformed how we communicate with clients. No more "where is my package" calls.', name: 'Aisha Bello', role: 'Operations Manager, SwiftCargo Nigeria', avatar: 'AB' },
+              { text: 'TrackFlow completely transformed how we communicate with clients. No more "where is my package" calls.', name: 'Kester Wimmers', role: 'Operations Manager, SwiftCargo', avatar: 'KW' },
               { text: 'The client portal is what sets TrackFlow apart. Each recipient gets their own secure login — it feels premium.', name: "James O'Brien", role: 'CEO, Dublin Freight Services', avatar: 'JO' },
               { text: 'Setup took less than an hour and the DHL integration worked perfectly. My clients love the tracking portal.', name: 'Marcus Weber', role: 'Founder, EuroShip GmbH', avatar: 'MW' },
             ].map((r, i) => (

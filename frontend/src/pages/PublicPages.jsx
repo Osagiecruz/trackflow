@@ -207,7 +207,7 @@ export function ContactPage() {
         badge="Get in Touch"
         title={<>We'd love to <span style={{ color: 'var(--brand)' }}>hear from you</span></>}
         subtitle="Have a question, partnership inquiry, or need support? Our team responds within 1–2 business days."
-        image="https://images.pexels.com/photos/4386321/pexels-photo-4386321.jpeg?auto=compress&cs=tinysrgb&w=1920"
+        image="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1920"
         height="44vh"
       />
 
@@ -308,9 +308,9 @@ export function ServicesPage() {
         {/* Main services with image */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', marginBottom: '5rem' }}>
           {[
-            { img: 'https://images.pexels.com/photos/7252972/pexels-photo-7252972.jpeg?auto=compress&cs=tinysrgb&w=600', title: 'Real-Time Parcel Tracking', desc: 'Live status from 42 global carriers, refreshed every 5 minutes. Interactive route map, full timeline, and estimated delivery.' },
-            { img: 'https://images.pexels.com/photos/4526414/pexels-photo-4526414.jpeg?auto=compress&cs=tinysrgb&w=600', title: 'Secure Client Portal', desc: 'Each recipient gets a unique login emailed automatically. Private, secure, no random access. Built-in quotation and crypto payment.' },
-            { img: 'https://images.pexels.com/photos/4386321/pexels-photo-4386321.jpeg?auto=compress&cs=tinysrgb&w=600', title: 'Agency Dashboard', desc: 'Full-featured operations portal. Create shipments, manage clients, track analytics, and get webhook integrations.' },
+            { img: 'https://images.pexels.com/photos/4393668/pexels-photo-4393668.jpeg?auto=compress&cs=tinysrgb&w=600', title: 'Real-Time Parcel Tracking', desc: 'Live status from 42 global carriers, refreshed every 5 minutes. Interactive route map, full timeline, and estimated delivery.' },
+            { img: 'https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=600', title: 'Secure Client Portal', desc: 'Each recipient gets a unique login emailed automatically. Private, secure, no random access. Built-in quotation and crypto payment.' },
+            { img: 'https://images.pexels.com/photos/265087/pexels-photo-265087.jpeg?auto=compress&cs=tinysrgb&w=600', title: 'Agency Dashboard', desc: 'Full-featured operations portal. Create shipments, manage clients, track analytics, and get webhook integrations.' },
           ].map((s, i) => (
             <FadeIn key={s.title} delay={i * 100}>
               <div className="hover-card" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 18, overflow: 'hidden', cursor: 'default' }}>
@@ -396,7 +396,7 @@ export function ServicesPage() {
 // ─── Reviews Page ──────────────────────────────────────
 export function ReviewsPage() {
   const reviews = [
-    { name: 'Aisha Bello', role: 'Operations Manager, SwiftCargo Nigeria', rating: 5, avatar: 'AB', text: 'TrackFlow completely transformed how we communicate with our clients. Instead of fielding dozens of "where is my package" calls daily, clients now track in real time. The email notifications are professional and our customer satisfaction score jumped significantly.' },
+    { name: 'Kester Wimmers', role: 'Operations Manager, SwiftCargo', rating: 5, avatar: 'KW', text: 'TrackFlow completely transformed how we communicate with our clients. Instead of fielding dozens of "where is my package" calls daily, clients now track in real time. The email notifications are professional and our customer satisfaction score jumped significantly.' },
     { name: 'Marcus Weber', role: 'Founder, EuroShip GmbH', rating: 5, avatar: 'MW', text: 'The agency approval process gave me confidence that I was joining a serious platform. Setup took less than an hour and the DHL integration worked perfectly out of the box. My clients love the tracking portal.' },
     { name: 'Priya Sharma', role: 'Logistics Director, IndiaExpress', rating: 5, avatar: 'PS', text: 'We process thousands of shipments monthly. TrackFlow handles the volume without breaking a sweat. The analytics dashboard helps us identify bottlenecks before they become problems. Highly recommend.' },
     { name: "James O'Brien", role: 'CEO, Dublin Freight Services', rating: 5, avatar: 'JO', text: 'What sets TrackFlow apart is the client portal. Each recipient gets their own secure login — no more sharing public tracking links that anyone can see. It feels premium and our enterprise clients noticed.' },
@@ -415,7 +415,7 @@ export function ReviewsPage() {
         badge="Customer Reviews"
         title={<>Trusted by agencies <span style={{ color: 'var(--brand)' }}>worldwide</span></>}
         subtitle="Hear from shipping agencies and logistics teams who rely on TrackFlow every day."
-        image="https://images.pexels.com/photos/7252972/pexels-photo-7252972.jpeg?auto=compress&cs=tinysrgb&w=1920"
+        image="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1920"
         height="44vh"
       />
 
